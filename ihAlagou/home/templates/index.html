@@ -30,7 +30,7 @@
             popupAnchor: [0, -32]
         });
 
-        var popupContent = "{{ items|escapejs }}";
+        var popupContent = "{{ distância|escapejs }}";
 
         L.marker([-8.0526073, -34.8845963], {icon: icone}).addTo(map)
             .bindPopup(popupContent)
