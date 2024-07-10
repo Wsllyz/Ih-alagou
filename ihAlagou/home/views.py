@@ -4,9 +4,7 @@ from django.http import JsonResponse
 
 
 def pegaDistancia(dado):
-    if 'payload' in dado:
-        return {'distância': dado['payload']}
-    return 'aaaa'
+    return {'distância': dado['payload']}
 
 # Create your views 
 def home_view(request):
@@ -14,6 +12,5 @@ def home_view(request):
     ultimoItem = items[-1]
     distancia = pegaDistancia(ultimoItem)
     distancia = distancia['distância']
-    lesgo = distancia['distância']
-    return render(request, 'index.html', {'distância':lesgo})
-
+    distancia = distancia['distância']
+    return render(request, 'index.html', {'distância':distancia})
