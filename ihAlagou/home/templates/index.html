@@ -17,35 +17,52 @@
 <body>
     <div id="map"></div>
     <script>
-        var map = L.map('map').setView([-8.0526073, -34.8845963], 19);
 
+        var map = L.map('map').setView([-8.0526073, -34.8845963], 19);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
+    
         var distancia = '{{ distância|escapejs }}';
-        if (distancia > 25) {
-                var url = "{% static 'home\css\src\pontoVermelho.png' %}"
-            } else if (distancia == 25 && distancia > 19) {
-                var url = "{% static 'home\css\src\pontoLaranja.png' %}"
-            } else if (distancia == 19 && distancia > 14) {
-                var url = "{% static 'home\css\src\pontoAmarelo.png' %}"
-            } else if (distancia == 14 && distancia > 9){
-                var url = "{% static 'home\css\src\pontoCiano.png' %}"
-            } else {
-                var url = "{% static 'home\css\src\pontoVerde.png' %}"
-            }
+        pegarDistancia();
+  
         var icone = L.icon({
-            iconUrl: url,
-            iconSize: [40, 50],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
-        });
-
-        var popupContent = "{{ distância|escapejs }}";
+                iconUrl: "{% static 'home\css\src\pontoVermelho.png' %}",
+                iconSize: [40, 50],
+                iconAnchor: [16, 32],
+                popupAnchor: [0, -32]
+            });
 
         var marker = L.marker([-8.0526073, -34.8845963], {icon: icone}).addTo(map)
-            .bindPopup(popupContent)
-            .openPopup();
+        .bindPopup(distancia);
+
+
+        function pegarDistancia() {
+            $.ajax({
+                url: "{% url 'home_view' %}",
+                type: "GET",
+                success: function(data) {
+                    distancia = data.distancia;
+                    atualizar();
+                }
+            });
+        }
+
+        function atualizar() {
+            if (distancia > 25) {
+                    var cor = "{% static 'home\css\src\pontoVermelho.png' %}"
+                } else if (distancia == 25 && distancia > 19) {
+                    var cor = "{% static 'home\css\src\pontoLaranja.png' %}"
+                } else if (distancia == 19 && distancia > 14) {
+                    var cor = "{% static 'home\css\src\pontoAmarelo.png' %}"
+                } else if (distancia == 14 && distancia > 9){
+                    var cor = "{% static 'home\css\src\pontoCiano.png' %}"
+                } else {
+                    var cor = "{% static 'home\css\src\pontoVerde.png' %}"
+                }
+            return cor;
+        }
+        setInterval(pegarDistancia, 1000);
     </script>
 </body>
 </html>
