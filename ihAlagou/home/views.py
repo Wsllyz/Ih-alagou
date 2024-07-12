@@ -15,8 +15,5 @@ def distancia_view(request):
     return JsonResponse({'distância': distancia['distância']})
 
 def home_view(request):
-    items = get_items()
-    ultimoItem = items[-1]
-    distancia = pegaDistancia(ultimoItem)
-    distancia = distancia['distância']
-    return render(request, 'index.html', {'distância':distancia['distância']})
+    distancia = distancia_view(request)
+    return render(request, 'index.html', {'distância':distancia})
