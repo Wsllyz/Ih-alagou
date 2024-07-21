@@ -26,15 +26,13 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        //pegarDistancia();
-
+        pegarDistancia();
 
         function pegarDistancia() {
             $.ajax({
                 url: "{% url 'home_view' %}",
                 type: "GET",
                 success: function(data) {
-                    alert(data.distancia);
                     distancia = data.distancia;
                     atualizar();
                 }
