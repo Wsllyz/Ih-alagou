@@ -18,29 +18,32 @@
 <body>
     <div id="map"></div>
     <script>
-        var distancia = '{{ distância|escapejs }}';
+        var distancia = '{{ dados|escapejs }}'
         var marker;
-
+        var cor;
         var map = L.map('map').setView([-8.0526073, -34.8845963], 19);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
         pegarDistancia();
+        atualizar();
 
         function pegarDistancia() {
             $.ajax({
-                url: "{% url 'home_view' %}",
+                url: "{% url 'distancia_view' %}",
                 type: "GET",
                 success: function(data) {
-                    distancia = data.distancia;
+                    console.log(data)
+                    distancia = data.dados.feeds[0].field5;
+                    console.log(distancia);
                     atualizar();
+                    
                 }
             });
         }
 
         function atualizar() {
-            var cor;
             if (distancia > 25) {
                 cor = "{% static 'home/css/src/pontoVermelho.png' %}";
             } else if (distancia > 19) {
