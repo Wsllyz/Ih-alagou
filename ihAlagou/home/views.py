@@ -2,6 +2,21 @@ from django.shortcuts import render
 from django.http import JsonResponse
 import requests
 
+class Sensor:
+    def __init__(self, url, endereco, tamanho):
+        self.url: str = url
+        self.endereco: str = endereco
+        self.tamanho: int = tamanho
+
+
+    def distancia_view(request):
+        response = requests.get('https://api.thingspeak.com/channels/2602561/feeds.json?api_key=4OW0Z91BKJ5U61ZT&results=2')
+        if response.status_code == 200:
+            dados = response.json()
+            return JsonResponse({'dados':dados})
+
+#sensor1 = Sensor('https://api.thingspeak.com/channels/2602561/feeds.json?api_key=4OW0Z91BKJ5U61ZT&results=2')
+
 
 
 def pegaDistancia(dado):
@@ -24,8 +39,4 @@ def distancia_view(request):
     return
 
 def home_view(request):
-    response = requests.get('https://api.thingspeak.com/channels/2602561/feeds.json?api_key=4OW0Z91BKJ5U61ZT&results=2')
-    if response.status_code == 200:
-        dados = response.json()
-        return render(request, 'index.html', {'dados':dados})
-    return render(request, 'index.html', {'dados':dados})
+    return render(request, 'index.html')

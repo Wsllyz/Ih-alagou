@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="{% static 'home/css/style.css' %}">
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
@@ -13,12 +14,52 @@
             height: 1920px;
             width: 100%;
         }
+        .hidden {
+            display: none;
+        }
+        .visible {
+            display: block;
+        }
+        #cardDiv {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: white;
+            padding: 10px;
+            border: 1px solid black;
+        }
     </style>
 </head>
 <body>
     <div id="map"></div>
+    
+    <!-- div do card-->
+    <div id="cardDiv" class="hidden">
+        <div id="info-panel">
+            <h2>Av. Gov. Agamenon Magalhães</h2>
+            <p>Índice de alagamento:</p>
+            <div id="flood-index">
+                <div id="level" style="height: 50%;"></div>
+            </div>
+            <div class="caixa">  
+                <div id="details">
+                    <p id="det"> Detalhes da situação atual</p>
+                    <p color id="alerta">Chuva intensa</p>
+                    <p>Distância da água: <span id="water-level">0.50</span>m</p>
+                    <p id="msg">Evite a área devido ao risco de alagamento ou tome medidas de precaução adequadas.</p>
+                </div>
+            </div>
+            <div id="chart">
+                <p>Gráfico das últimas 12 horas:</p>
+                <canvas id="floodChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="scripts.js"></script>
     <script>
-        var distancia = '{{ dados|escapejs }}'
+        var distancia = '{{ dados|escapejs }}';
         var marker;
         var cor;
         var map = L.map('map').setView([-8.0526073, -34.8845963], 19);
@@ -27,18 +68,17 @@
         }).addTo(map);
 
         pegarDistancia();
-        atualizar();
+        setInterval(pegarDistancia, 5000);
 
         function pegarDistancia() {
             $.ajax({
                 url: "{% url 'distancia_view' %}",
                 type: "GET",
                 success: function(data) {
-                    console.log(data)
+                    console.log(data);
                     distancia = data.dados.feeds[0].field5;
                     console.log(distancia);
                     atualizar();
-                    
                 }
             });
         }
@@ -67,11 +107,19 @@
                 map.removeLayer(marker);
             }
 
-            marker = L.marker([-8.0526073, -34.8845963], {icon: icone}).addTo(map)
-                .bindPopup(distancia);
-        }
+            marker = L.marker([-8.0526073, -34.8845963], {icon: icone}).addTo(map);
 
-        setInterval(pegarDistancia, 5000);
+            marker.on('click', function() {
+                var cardDiv = document.getElementById('cardDiv');
+                if (cardDiv.classList.contains('hidden')) {
+                    cardDiv.classList.remove('hidden');
+                    cardDiv.classList.add('visible');
+                } else {
+                    cardDiv.classList.remove('visible');
+                    cardDiv.classList.add('hidden');
+                }
+            });
+        }
     </script>
 </body>
 </html>
